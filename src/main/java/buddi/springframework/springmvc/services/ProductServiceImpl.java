@@ -4,10 +4,8 @@ import buddi.springframework.springmvc.domain.Product;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -20,6 +18,33 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> listAllProducts() {
         return new ArrayList<>(products.values());
+    }
+
+    @Override
+    public Product getProductById(Integer id) { return products.get(id); }
+
+    @Override
+    public Product saveOrUpdateProduct(Product product) {
+
+        if(product != null){
+            if(product.getId() == null){
+                product.setId(getNextKey());
+            }
+            products.put(product.getId(), product);
+            return product;
+        } else {
+            throw new RuntimeException("Product can't be null");
+        }
+
+    }
+
+    @Override
+    public void deleteProduct(Integer id) {
+        products.remove(id);
+    }
+
+    private Integer getNextKey() {
+        return Collections.max(products.keySet()) +1;
     }
 
     private void loadProducts() {
